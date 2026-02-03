@@ -1,14 +1,14 @@
+
 name: CI - Build & Push Docker Image
 
 on:
   push:
     branches:
       - master
-      - dockerciupdate
-  tags:
-    - "v*"
-    - "release-*"
-    - "build-*"
+    tags:
+      - "v*"
+      - "release-*"
+      - "build-*"
 
 env:
   IMAGE_TAG: ${{ github.run_number }}
