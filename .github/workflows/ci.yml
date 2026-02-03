@@ -1,0 +1,40 @@
+name: CI - Build & Push Docker Images
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "v*"
+      - "release-*"
+      - "build-*"
+
+env:
+  IMAGE_TAG: ${{ github.ref_name }}-${{ github.run_number }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Login to ACR
+      run: |
+        az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
+
+    - name: Build & Push API
+      run: |
+        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/service-api:${IMAGE_TAG} service-api
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/service-api:${IMAGE_TAG}
+
+    - name: Build & Push UI
+      run: |
+        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/service-ui:${IMAGE_TAG} service-ui
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/service-ui:${IMAGE_TAG}
