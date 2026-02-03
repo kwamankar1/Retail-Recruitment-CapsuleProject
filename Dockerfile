@@ -1,36 +1,11 @@
-name: CI - Build & Push Docker Image
+FROM node:18-alpine
 
-on:
-  push:
-    branches:
-      - master
-    tags:
-      - "v*"
-      - "release-*"
-      - "build-*"
+WORKDIR /app
 
-env:
-  IMAGE_TAG: ${{ github.run_number }}
+COPY package*.json ./
+RUN npm install --only=production
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+COPY . .
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Login to ACR
-      run: |
-        az acr login --name acrrecruitmentprod
-
-    - name: Build & Push Image
-      run: |
-        IMAGE=acrrecruitmentprod.azurecr.io/retail-recruitment:${IMAGE_TAG}
-        docker build -t $IMAGE .
-        docker push $IMAGE
+EXPOSE 3000
+CMD ["npm", "start"]
