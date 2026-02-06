@@ -1,3 +1,8 @@
+This application can be accessed via
+
+https://http://13.86.98.240/
+
+
 📘 CAPSTONE PROJECT DOCUMENTATION
 Recruitment Application on Azure AKS using Terraform, CI/CD, Helm & GitOps
 
